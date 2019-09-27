@@ -1,8 +1,7 @@
 #! python3
-# SeinLoad.py - download all Seinfeld scripts as HTML files.
+# SeinLoad.py - Download all Seinfeld scripts as HTML files.
 
 from urllib.request import urlopen
-
 import bs4, os, requests
 
 # Get the episode URL from the show page.

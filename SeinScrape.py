@@ -1,4 +1,5 @@
-# Crawl through the script of each episode of Seinfeld.
+#! python3
+# SeinScrape.py - Save all dialogue spoke by each character in Seinfeld as TXT files.
 
 import bs4, os, re, requests
 
