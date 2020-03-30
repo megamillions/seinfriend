@@ -94,7 +94,7 @@ def WriteCharacterLines(character, file_path):
 		# Bit actors are not credited in the script.
 		except:
 			break
-
+		break	# this line is for testing only
 	print("Adding to " + character_path + " FROM..." + file_path)
 
 	# Write line to file, then close file.
