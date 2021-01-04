@@ -2,13 +2,25 @@
 # and pull each line of dialogue and store by character.
 # See: SeinScrape.py
 
-
 # Return each new line and post to Twitter every 6 hours or so.
-
 
 import numpy as np
 import os
 import re
+
+characters = ['Bania', 'Elaine', 'Estelle', 'Frank', 'George', 'Helen',
+	'Jack', 'Jackie', 'Jerry', 'Kramer', 'Mickey', 'Morty',
+	'Mr. Lippman', 'Newman', 'Peterman', 'Pitt', 'Puddy', 'Steinbrenner',
+	'Sue Ellen', 'Susan', 'Uncle Leo', 'Wilhelm']
+
+sentence_length = 30
+
+def read_file(character):
+
+	dialogue_directory = '\\Dialogue\\'
+
+	character_file = open(os.path.join(os.getcwd() + dialogue_directory + character + '.txt'))
+	return character_file.read()
 
 # Preprocess data for each character.
 def build_transition_matrix(corpus):
@@ -56,25 +68,60 @@ def sample_sentence(corpus, sentence_length, burn_in = 1000):
 			
 	return ' '.join(sentence)
 
-characters = ['Bania', 'Elaine', 'Estelle', 'Frank', 'George', 'Helen',
-	'Jack', 'Jackie', 'Jerry', 'Kramer', 'Mickey', 'Morty',
-	'Mr. Lippman', 'Newman', 'Peterman', 'Pitt', 'Puddy', 'Steinbrenner',
-	'Sue Ellen', 'Susan', 'Uncle Leo', 'Wilhelm']
+# Produces a cleaned line of dialogue.
+def clean_line(character, sentence_length):
 
-sentence_length = 20
+	character_lines = read_file(character)
 
-def get_line(character, sentence_length):
-
-	dialogue_directory = '\\Dialogue\\'
-
-	character_file = open(os.path.join(os.getcwd() + dialogue_directory + character + '.txt'))
-	character_lines = character_file.read()
-	
 	# Special instances.
 	if character == 'Peterman' or character == 'Pitt' or character == 'Steinbrenner':
 		character = 'Mr. ' + character
 	
-	return character.upper() + ': ' + sample_sentence(character_lines, sentence_length)
+	to_clean = sample_sentence(character_lines, sentence_length)
 
-for n in range(0, len(characters)):
-	print(get_line(characters[n], sentence_length))
+	to_clean = re.split('\. ', to_clean)
+
+    # Begins line with at the start of first sentence.
+	if not to_clean[0][0].isupper():
+		to_clean.pop(0)
+
+	# Ends line at any sign of punctuation.
+	if to_clean[-1][-1] not in ['\.', '\!', '\?']:
+		to_clean.pop(-1)
+
+	return character.upper() + ': ' + ". ".join(to_clean) + '.'
+
+# Counts the number of lines a character speaks.
+def count_lines(character):
+
+	character_lines = read_file(character)
+	count = 1
+	
+	for c in character_lines:
+		if c == '\n':
+			count += 1
+			
+	return count
+
+# Weighs the character dialogue by number of lines each has.
+def generate_line():
+
+	# Stores cumulative lines spoken.
+	spoken_lines = {}
+	gross_count = 0
+
+	# Builds spoken line dictionary.
+	for n in range(0, len(characters)):
+
+		gross_count += count_lines(characters[n])
+		spoken_lines[characters[n]] = gross_count
+
+	# Draw a line at random.
+	draw = np.random.randint(gross_count)
+
+	# Assign the drawn pick to a character and return line.
+	for k, v in spoken_lines.items():
+		if draw < v:
+			return clean_line(k, sentence_length)
+
+print(generate_line())

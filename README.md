@@ -10,3 +10,4 @@ Save all lines of dialogue spoken by principal and supporting cast in their resp
 Apply cleaning as necessary.
 
 ## Step 3: Run SeinCraft.py
+Much credit to Scott Rome for providing the theoretical groundwork and code on Markov chains: http://srome.github.io/Making-A-Markov-Chain-Twitter-Bot-In-Python/
